@@ -44,8 +44,13 @@ RUN set -x \
   && rm -rf "$GNUPGHOME" nomad_${NOMAD_VERSION}_linux_amd64.zip nomad_${NOMAD_VERSION}_SHA256SUMS nomad_${NOMAD_VERSION}_SHA256SUMS.sig \
   && apk del .nomad-deps
 
-RUN mkdir -p /nomad/data && \
-    mkdir -p /etc/nomad && \
+RUN mkdir /nomad
+RUN mkdir -p /etc/nomad
+
+VOLUME /nomad
+VOLUME /etc/nomad
+
+RUN mkdir /nomad/data && \
     chown -R nomad:nomad /nomad
 
 EXPOSE 4646 4647 4648 4648/udp

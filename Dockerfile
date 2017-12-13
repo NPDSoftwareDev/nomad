@@ -45,13 +45,11 @@ RUN set -x \
   && apk del .nomad-deps
 
 RUN mkdir -p /nomad/data
-RUN mkdir -p /etc/nomad
+RUN mkdir -p /nomad/config
+
+RUN  chown -R nomad:nomad /nomad
 
 VOLUME /nomad/data
-VOLUME /etc/nomad
-
-RUN mkdir /nomad/data && \
-    chown -R nomad:nomad /nomad
 
 EXPOSE 4646 4647 4648 4648/udp
 

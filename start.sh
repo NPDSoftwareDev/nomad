@@ -1,5 +1,5 @@
 #!/usr/local/bin/dumb-init /bin/sh
-# Script created following Hashicorp's model for Consul: 
+# Script created following Hashicorp's model for Consul:
 # https://github.com/hashicorp/docker-consul/blob/master/0.X/docker-entrypoint.sh
 # Comments in this file originate from the project above, simply replacing 'Consul' with 'Nomad'.
 set -e
@@ -14,7 +14,7 @@ set -e
 # config files in there if you use this image as a base, or use NOMAD_LOCAL_CONFIG
 # below.
 NOMAD_DATA_DIR=/nomad/data
-NOMAD_CONFIG_DIR=/etc/nomad
+NOMAD_CONFIG_DIR=/nomad/config
 
 # You can also set the NOMAD_LOCAL_CONFIG environemnt variable to pass some
 # Nomad configuration JSON without having to bind any volumes.
@@ -48,8 +48,12 @@ fi
 if [ "$1" = 'nomad' ]; then
     # If the data or config dirs are bind mounted then chown them.
     # Note: This checks for root ownership as that's the most common case.
+    if [ "$(stat -c %u /nomad/config)" != "$(id -u root)" ]; then
+        chown root:root /nomad/config
+    fi
+
     if [ "$(stat -c %u /nomad/data)" != "$(id -u root)" ]; then
-        chown root:root /etc/nomad
+        chown root:root /nomad/data
     fi
 
     # If requested, set the capability to bind to privileged ports before

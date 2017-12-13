@@ -9,6 +9,8 @@ ENV GLIBC_VERSION "2.25-r0"
 ENV GOSU_VERSION 1.10
 ENV DUMB_INIT_VERSION 1.2.0
 
+RUN apk add dos2unix --update-cache --repository http://dl-3.alpinelinux.org/alpine/edge/community/ --allow-untrusted
+
 RUN set -x && \
     apk --update add --no-cache --virtual .gosu-deps dpkg curl gnupg && \
     curl -L -o /tmp/glibc-${GLIBC_VERSION}.apk https://github.com/andyshinn/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/glibc-${GLIBC_VERSION}.apk && \
@@ -54,5 +56,7 @@ VOLUME /nomad/data
 EXPOSE 4646 4647 4648 4648/udp
 
 ADD start.sh /usr/local/bin/start.sh
+
+RUN dos2unix /usr/local/bin/start.sh
 
 ENTRYPOINT ["/usr/local/bin/start.sh"]

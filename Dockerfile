@@ -44,10 +44,10 @@ RUN set -x \
   && rm -rf "$GNUPGHOME" nomad_${NOMAD_VERSION}_linux_amd64.zip nomad_${NOMAD_VERSION}_SHA256SUMS nomad_${NOMAD_VERSION}_SHA256SUMS.sig \
   && apk del .nomad-deps
 
-RUN mkdir /nomad
+RUN mkdir -p /nomad/data
 RUN mkdir -p /etc/nomad
 
-VOLUME /nomad
+VOLUME /nomad/data
 VOLUME /etc/nomad
 
 RUN mkdir /nomad/data && \

@@ -9,7 +9,7 @@ ENV GLIBC_VERSION "2.25-r0"
 ENV GOSU_VERSION 1.10
 ENV DUMB_INIT_VERSION 1.2.0
 
-RUN apk add dos2unix --update-cache --repository http://dl-3.alpinelinux.org/alpine/edge/community/ --allow-untrusted
+RUN apk add dos2unix  --update-cache --repository http://dl-3.alpinelinux.org/alpine/edge/community/ --allow-untrusted
 
 RUN set -x && \
     apk --update add --no-cache --virtual .gosu-deps dpkg curl gnupg && \
@@ -29,10 +29,10 @@ RUN set -x && \
     gosu nobody true && \
     apk del .gosu-deps
 
-ENV NOMAD_VERSION 0.7.0
+ENV NOMAD_VERSION 0.7.1
 
 RUN set -x \
-  && apk --update add --no-cache --virtual .nomad-deps gnupg curl dumb-init gnupg libcap openssl su-exec \
+  && apk --update add --no-cache --virtual .nomad-deps gnupg curl \
   && cd /tmp \
   && curl -L -o nomad_${NOMAD_VERSION}_linux_amd64.zip https://releases.hashicorp.com/nomad/${NOMAD_VERSION}/nomad_${NOMAD_VERSION}_linux_amd64.zip \
   && curl -L -o nomad_${NOMAD_VERSION}_SHA256SUMS      https://releases.hashicorp.com/nomad/${NOMAD_VERSION}/nomad_${NOMAD_VERSION}_SHA256SUMS \
@@ -45,6 +45,8 @@ RUN set -x \
   && chmod +x /bin/nomad \
   && rm -rf "$GNUPGHOME" nomad_${NOMAD_VERSION}_linux_amd64.zip nomad_${NOMAD_VERSION}_SHA256SUMS nomad_${NOMAD_VERSION}_SHA256SUMS.sig \
   && apk del .nomad-deps
+
+RUN apk add --no-cache ca-certificates curl dumb-init gnupg libcap openssl
 
 RUN mkdir -p /nomad/data
 RUN mkdir -p /nomad/config

@@ -57,7 +57,7 @@ if [ "$1" = 'nomad' ]; then
         chown root:root /nomad/data
     fi
 
-    update-ca-certificates /nomad/config/ssl/ca.cert
+    cp /nomad/config/ssl/ca.cert /usr/local/share/ca-certificates/consul.cert && update-ca-certificates 
 
     # If requested, set the capability to bind to privileged ports before
     # we drop to the non-root user. Note that this doesn't work with all

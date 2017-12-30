@@ -46,6 +46,7 @@ fi
 
 # If we are running Nomad, make sure it executes as the proper user.
 if [ "$1" = 'nomad' ]; then
+    
     # If the data or config dirs are bind mounted then chown them.
     # Note: This checks for root ownership as that's the most common case.
     if [ "$(stat -c %u /nomad/config)" != "$(id -u root)" ]; then
@@ -55,6 +56,8 @@ if [ "$1" = 'nomad' ]; then
     if [ "$(stat -c %u /nomad/data)" != "$(id -u root)" ]; then
         chown root:root /nomad/data
     fi
+
+    update-ca-certificates /nomad/config/ssl/ca.cert
 
     # If requested, set the capability to bind to privileged ports before
     # we drop to the non-root user. Note that this doesn't work with all

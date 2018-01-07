@@ -16,6 +16,12 @@ set -e
 NOMAD_DATA_DIR=/nomad/data
 NOMAD_CONFIG_DIR=/nomad/config
 
+if [ -S '/var/run/docker.sock' ]; then
+    DOCKER_GID=$(stat -c '%g' '/var/run/docker.sock')
+    groupadd -for -g ${DOCKER_GID} hostdocker
+    usermod -aG ${DOCKER_GROUP} nomad
+fi
+
 # You can also set the NOMAD_LOCAL_CONFIG environemnt variable to pass some
 # Nomad configuration JSON without having to bind any volumes.
 if [ -n "$NOMAD_LOCAL_CONFIG" ]; then

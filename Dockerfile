@@ -2,14 +2,16 @@ FROM alpine:3.7
 
 LABEL maintainer="DJ Enriquez <denrie.enriquezjr@gmail.com> (@djenriquez)"
 
-RUN addgroup nomad && \
-    adduser -S -G nomad nomad
-
 ENV GLIBC_VERSION "2.25-r0"
 ENV GOSU_VERSION 1.10
 ENV DUMB_INIT_VERSION 1.2.0
 
-RUN apk add dos2unix  --update-cache --repository http://dl-3.alpinelinux.org/alpine/edge/community/ --allow-untrusted
+RUN apk update
+
+RUN apk add shadow docker dos2unix  --update-cache --repository http://dl-3.alpinelinux.org/alpine/edge/community/ --allow-untrusted
+
+RUN addgroup -g 1100 nomad && \
+    adduser -S -G nomad -u 1100 nomad
 
 RUN set -x && \
     apk --update add --no-cache --virtual .gosu-deps dpkg curl gnupg && \
@@ -22,7 +24,7 @@ RUN set -x && \
     curl -L -o /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch" && \
     curl -L -o /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc" && \
     export GNUPGHOME="$(mktemp -d)" && \
-    gpg --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 && \
+    gpg --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 && \
     gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu && \
     rm -rf "$GNUPGHOME" /usr/local/bin/gosu.asc && \
     chmod +x /usr/local/bin/gosu && \
@@ -38,7 +40,7 @@ RUN set -x \
   && curl -L -o nomad_${NOMAD_VERSION}_SHA256SUMS      https://releases.hashicorp.com/nomad/${NOMAD_VERSION}/nomad_${NOMAD_VERSION}_SHA256SUMS \
   && curl -L -o nomad_${NOMAD_VERSION}_SHA256SUMS.sig  https://releases.hashicorp.com/nomad/${NOMAD_VERSION}/nomad_${NOMAD_VERSION}_SHA256SUMS.sig \
   && export GNUPGHOME="$(mktemp -d)" \
-  && gpg --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 51852D87348FFC4C \
+  && gpg --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-keys 51852D87348FFC4C \
   && gpg --batch --verify nomad_${NOMAD_VERSION}_SHA256SUMS.sig nomad_${NOMAD_VERSION}_SHA256SUMS \
   && grep nomad_${NOMAD_VERSION}_linux_amd64.zip nomad_${NOMAD_VERSION}_SHA256SUMS | sha256sum -c \
   && unzip -d /bin nomad_${NOMAD_VERSION}_linux_amd64.zip \

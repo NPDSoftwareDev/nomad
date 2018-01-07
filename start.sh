@@ -18,8 +18,9 @@ NOMAD_CONFIG_DIR=/nomad/config
 
 if [ -S '/var/run/docker.sock' ]; then
     DOCKER_GID=$(stat -c '%g' '/var/run/docker.sock')
+    echo "docker group: ${DOCKER_GID}"
     groupadd -for -g ${DOCKER_GID} hostdocker
-    usermod -aG ${DOCKER_GROUP} nomad
+    usermod -aG hostdocker nomad
 fi
 
 # You can also set the NOMAD_LOCAL_CONFIG environemnt variable to pass some
